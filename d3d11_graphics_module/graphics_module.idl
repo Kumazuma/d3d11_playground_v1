@@ -1,0 +1,79 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+typedef struct G1Matrix {
+	float c11;
+	float c12;
+	float c13;
+	float c14;
+	float c21;
+	float c22;
+	float c23;
+	float c24;
+	float c31;
+	float c32;
+	float c33;
+	float c34;
+	float c41;
+	float c42;
+	float c43;
+	float c44;
+} G1Matrix;
+
+typedef struct G1MeshDesc {
+	void* vertices; // array of float [x, y, z] tuple per vertex
+	UINT numOfVertices; // the number of vertics
+	void* indices; // array of 4 byte integer
+	UINT numOfIndices;
+	void* texCoords; // array of float [x, y] tuple per vertex
+	void* normals; // array of float [x, y, z] tuple per vertex
+	void* boneWeights; // array of float [x, y, z, w] tuple per vertex
+	void* boneIndices; // array of 4 byte integer [x, y, z, w] tuple per vertex
+} G1MeshDesc;
+
+[object, local, uuid(0D1C1A03-E59C-4ECA-B3A6-57CC13200EA1)]
+interface IG1RenderTarget : IUnknown {
+	
+};
+
+[object, local, uuid(B389A412-C974-4FFE-BBA3-A80E0C0D5F3B)]
+interface IG1WindowRenderTarget : IG1RenderTarget {
+	HRESULT Resize([in] UINT width, [in] UINT height);
+	HRESULT Present();
+};
+
+[object, local, uuid(C4B312B9-8CC2-46C0-881B-05ECCD9F6740)]
+interface IG1Mesh : IUnknown {
+
+};
+
+[object, local, uuid(DD6FE070-7B6D-4A62-AC52-5244E1AFCFEB)]
+interface IG1Object : IUnknown {
+	HRESULT SetTransform([in] const G1Matrix* pMatrix);
+	HRESULT GetTransform([in][out] G1Matrix* pMatrix);
+	HRESULT SetMesh([in] IG1Mesh* pMesh);
+};
+
+[object, local, uuid(B906D84B-B120-40FF-BBD5-E474944A9DF7)]
+interface IG1Scene : IUnknown {
+	HRESULT AddObject([in] IG1Object* pObj);
+	HRESULT RemoveObject([in] IG1Object* pObj);
+	UINT GetNumOfObject();
+	HRESULT Get([in] UINT index, [out] IG1Object** ppObj);
+	UINT GetAsArray([in] UINT offset, [in] UINT count, [in][out] IG1Object** pArray);
+};
+
+[object, local, uuid(0E6F4E9C-C67D-4A94-891A-481AF53E614F)]
+interface IG1RenderManager : IUnknown {
+	HRESULT Render([in] IG1RenderTarget* outputTarget);
+	HRESULT SetScene([in] IG1Scene* scene);
+};
+
+[object, local, uuid(F40915A4-1726-41AA-B916-2EE40F5F0F24)]
+interface IG1Factory : IUnknown {
+	HRESULT CreateRenderTarget([in] HWND hWindow, [in] UINT width, [in] UINT height, [out] IG1WindowRenderTarget** ppRenderTarget);
+	HRESULT CreateRenderManager([out] IG1RenderManager** ppRenderMgr);
+	HRESULT CreateScene([out] IG1Scene** ppScene);
+	HRESULT CreateObject([out] IG1Object** ppObj);
+	HRESULT CreateMesh([in] const G1MeshDesc* desc, [out] IG1Mesh** ppMesh);
+};

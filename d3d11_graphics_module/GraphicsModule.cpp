@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include <DirectXMath.h>
 
-HRESULT g1::CreateFactory(IFactory** ppFactory) {
+HRESULT g1::CreateFactory(::IG1Factory** ppFactory) {
 	try
 	{
 		*ppFactory = new Factory();
@@ -45,10 +45,15 @@ g1::Factory::Factory()
 	if (m_ptrObjectTable == nullptr)
 		throw E_OUTOFMEMORY;
 
-	void* ret = VirtualAlloc(m_ptrObjectTable, MEMORY_PAGE_SIZE, MEM_COMMIT, PAGE_READWRITE);
+	int numPageOfNode = ((sizeof(ObjectTable::node) + MEMORY_PAGE_SIZE - 1) / MEMORY_PAGE_SIZE);
+	void* ret = VirtualAlloc(m_ptrObjectTable, MEMORY_PAGE_SIZE * numPageOfNode, MEM_COMMIT, PAGE_READWRITE);
 	assert(ret != nullptr);
 	memset(ret, 0xFF, sizeof(ObjectTable::node));
-	m_commitedState |= 1ull << 63;
+	for (int i = 0; i < numPageOfNode; ++i)
+	{
+		m_commitedState |= 1ull << (63 - i);
+	}
+
 	m_objectTable = (ObjectTable*)m_ptrObjectTable;
 	for (size_t i = 0; i < MAX_NUM_OF_OBJECT; ++i)
 	{

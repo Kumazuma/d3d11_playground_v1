@@ -17,5 +17,5 @@ namespace g1 {
 	using IWindowRenderTarget = ::IG1WindowRenderTarget;
 	using IRenderManager = IG1RenderManager;
 	using IFactory = IG1Factory;
-	HRESULT D3D11_GRAPHICS_MODULE_API CreateFactory(IFactory** ppFactory);
+	HRESULT D3D11_GRAPHICS_MODULE_API CreateFactory(::IG1Factory** ppFactory);
 }

@@ -7,6 +7,8 @@ class RenderD3d11V2App : public wxApp
 {
 public:
 	bool OnInit() override;
+	
+	int OnExit() override;
 
 private:
 	wxFrame* m_pFrame = nullptr;

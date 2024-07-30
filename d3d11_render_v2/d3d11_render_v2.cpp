@@ -20,3 +20,9 @@ bool RenderD3d11V2App::OnInit()
 
 	return true;
 }
+
+int RenderD3d11V2App::OnExit()
+{
+	int ret = wxApp::OnExit();
+	return ret;
+}
